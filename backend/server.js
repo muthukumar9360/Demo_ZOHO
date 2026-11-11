@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
 const { connectDB } = require('./config/db');
 const taskRoutes = require('./routes/taskRoutes');
 const healthRoutes = require('./routes/healthRoutes');
@@ -11,11 +13,12 @@ const { errorHandler, notFound } = require('./middleware/errorHandler');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+// Zoho Catalyst AppSail allocates dynamic listen port via X_ZOHO_CATALYST_LISTEN_PORT
+const PORT = process.env.X_ZOHO_CATALYST_LISTEN_PORT || process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: '*', // Allow frontend development server
+  origin: '*', // Allows Catalyst Web Client and local development
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
@@ -27,10 +30,10 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Welcome route
-app.get('/', (req, res) => {
+// Welcome route for API
+app.get('/api', (req, res) => {
   res.status(200).json({
-    message: 'Welcome to Cloud Task Manager API',
+    message: 'Welcome to Cloud Task Manager API (Zoho Catalyst Ready)',
     endpoints: {
       health: '/api/health',
       tasks: '/api/tasks',
@@ -42,6 +45,29 @@ app.get('/', (req, res) => {
 // Mount API Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/tasks', taskRoutes);
+
+// If frontend build is packaged together, serve static client files
+const clientDistPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientDistPath, 'index.html'));
+  });
+} else {
+  // Fallback root endpoint when backend runs standalone
+  app.get('/', (req, res) => {
+    res.status(200).json({
+      service: 'Cloud Task Manager Backend API',
+      status: 'online',
+      platform: 'Zoho Catalyst AppSail',
+      health: '/api/health',
+      tasks: '/api/tasks',
+    });
+  });
+}
 
 // Error Handling Middleware
 app.use(notFound);
@@ -66,4 +92,3 @@ if (require.main === module) {
 }
 
 module.exports = { app, startServer };
-

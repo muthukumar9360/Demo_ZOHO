@@ -1,0 +1,12 @@
+{
+  "appsail": [
+    {
+      "name": "cloud-task-manager-api",
+      "source": "backend",
+      "stack": "node20"
+    }
+  ],
+  "client": {
+    "source": "frontend/dist"
+  }
+}
