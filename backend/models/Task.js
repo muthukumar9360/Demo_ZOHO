@@ -53,3 +53,4 @@ taskSchema.index({ title: 'text', description: 'text' });
 taskSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Task', taskSchema);
+

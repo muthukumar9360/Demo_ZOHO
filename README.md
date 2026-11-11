@@ -333,3 +333,4 @@ This application is engineered with clear separation between the Express backend
 - The frontend interacts strictly through `VITE_API_BASE_URL`.
 - Database credentials and settings reside exclusively in environment variables.
 - When ready for deployment, the frontend can be hosted as a Web Client / AppSail on Zoho Catalyst, and the backend can be deployed as an AppSail service or Advanced I/O function without modifying core business logic.
+

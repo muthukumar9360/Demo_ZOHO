@@ -50,3 +50,4 @@ export default function LoadingSkeleton({ count = 6, viewMode = 'grid' }) {
     </div>
   );
 }
+

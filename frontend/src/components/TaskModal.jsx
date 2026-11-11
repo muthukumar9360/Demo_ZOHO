@@ -190,3 +190,4 @@ export default function TaskModal({ isOpen, onClose, onSubmit, initialTask = nul
     </div>
   );
 }
+

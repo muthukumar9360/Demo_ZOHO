@@ -17,3 +17,4 @@ const checkDbConnection = (req, res, next) => {
 };
 
 module.exports = checkDbConnection;
+
