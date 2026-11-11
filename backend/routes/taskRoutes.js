@@ -14,8 +14,12 @@ const {
   validateCreateTask,
   validateUpdateStatus,
 } = require('../middleware/validateTask');
+const checkDbConnection = require('../middleware/checkDbConnection');
 
-// Dashboard metrics endpoint (placed before :id route so it doesn't get treated as an ID)
+// Check DB connection on all task operations
+router.use(checkDbConnection);
+
+// Dashboard metrics endpoint
 router.get('/stats/summary', getTaskStats);
 
 // Main task collection routes
